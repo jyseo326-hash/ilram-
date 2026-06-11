@@ -46,20 +46,23 @@
   .nav-btn.active { border-color: #3a3a3a; color: #3a3a3a; }
   .nav-right { font-size: 11px; color: #b0b2b5; letter-spacing: 0.05em; }
 
-  /* ── 메인 레이아웃 ── */
+  /* ── 메인 레이아웃 (반응형 대응) ── */
   .main {
     display: flex;
     flex: 1;
     overflow: hidden;
+    width: 100%;
+    max-width: 1600px; /* 화면이 너무 과하게 늘어나는 것을 방지 */
+    margin: 0 auto;    /* 화면 정중앙 배치 */
   }
 
-  /* ── 왼쪽: 분기 패널 ── */
+  /* ── 왼쪽: 분기 패널 (반응형 고정폭) ── */
   .left-panel {
     width: 280px;
     flex-shrink: 0;
     border-right: 0.5px solid #c8cacc;
     overflow-y: auto;
-    padding: 28px 28px;
+    padding: 28px 24px;
     background: #f6f6f3;
   }
   .left-panel::-webkit-scrollbar { width: 3px; }
@@ -122,7 +125,6 @@
   .mini-cal td.today { color: #3a3a3a; font-weight: 500; }
 
   .q-divider { height: 0.5px; background: #e4e4e0; margin: 16px 0; }
-
   .q-retro-label { font-size: 11px; color: #3a3a3a; letter-spacing: 0.06em; margin-bottom: 8px; font-weight: 500; }
 
   /* 월 탭 */
@@ -153,7 +155,7 @@
   .month-tab.active { background: #3a3a3a; color: #f6f6f3; }
 
   /* 체크리스트 */
-  .checklist-wrap { padding: 4px 4px 4px 4px; }
+  .checklist-wrap { padding: 4px; }
   .checklist-item {
     display: flex;
     align-items: flex-start;
@@ -204,12 +206,13 @@
   .checklist-add:hover { color: #97999c; }
   .checklist-add-icon { font-size: 14px; line-height: 1; }
 
-  /* ── 오른쪽: 플래너 ── */
+  /* ── 오른쪽: 플래너 패널 (유연한 너비 적용) ── */
   .right-panel {
     flex: 1;
     overflow-y: auto;
-    padding: 28px 36px;
+    padding: 28px 3vw; /* 해상도에 맞춰 좌우 여백이 자연스럽게 유동형으로 변경 */
     background: #f6f6f3;
+    min-width: 650px;   /* 가로선 위계가 깨지지 않도록 최소 가로폭 보장 */
   }
   .right-panel::-webkit-scrollbar { width: 3px; }
   .right-panel::-webkit-scrollbar-thumb { background: #ddddd9; }
@@ -235,7 +238,7 @@
   .m-dot.done { background: #b0b2b5; }
   .m-dot.current { background: #3a3a3a; }
 
-  /* 🎯 재조정된 월 목표/회고 영역 (요일 7등분 그리드와 완벽 일치) */
+  /* 요일 그리드에 맞춘 월간 목표/회고 영역 */
   .month-goal-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -244,21 +247,22 @@
     margin-bottom: 16px;
   }
   .month-goal-left {
-    grid-column: 1 / 5; /* 4칸 (월~목) */
+    grid-column: 1 / 5;
     display: flex;
     border-right: 0.5px solid #c8cacc;
   }
   .month-goal-spacer {
-    width: 72px; /* 화살표(24) + 주차(48) 여백 일치용 */
+    width: 72px;
     flex-shrink: 0;
     border-right: 0.5px solid #ddddd9;
   }
   .month-goal-cell {
     flex: 1;
     padding: 8px 12px;
+    min-width: 0; /* 내부 flex 아이템 글자 잘림 방지 */
   }
   .month-goal-right {
-    grid-column: 5 / 8; /* 3칸 (금~일) */
+    grid-column: 5 / 8;
   }
   
   .mgc-label { font-size: 11px; color: #3a3a3a; letter-spacing: 0.06em; margin-bottom: 5px; font-weight: 500; }
@@ -281,7 +285,7 @@
     overflow: hidden;
   }
 
-  /* 🎯 재조정된 주차 헤더 (요일 7등분 그리드와 완벽 일치) */
+  /* 요일 그리드에 맞춘 주차 헤더 */
   .week-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -294,7 +298,7 @@
   .week-header:hover { background: #e8e7e3; }
   
   .week-header-left {
-    grid-column: 1 / 5; /* 4칸 (월~목) */
+    grid-column: 1 / 5;
     display: flex;
     border-right: 0.5px solid #ddddd9;
   }
@@ -322,7 +326,7 @@
     align-items: center;
     letter-spacing: 0.04em;
   }
-  .week-goal-cell { flex: 1; padding: 7px 12px; }
+  .week-goal-cell { flex: 1; padding: 7px 12px; min-width: 0; }
   .week-goal-cell input {
     width: 100%;
     background: none;
@@ -335,8 +339,9 @@
   .week-goal-cell input::placeholder { color: #c8cacc; }
   
   .week-retro-cell { 
-    grid-column: 5 / 8; /* 3칸 (금~일) */
+    grid-column: 5 / 8;
     padding: 7px 12px; 
+    min-width: 0;
   }
   .week-retro-cell input {
     width: 100%;
@@ -349,7 +354,7 @@
   }
   .week-retro-cell input::placeholder { color: #c8cacc; }
 
-  /* ── 주간 띠 (슬라이드 모션) ── */
+  /* ── 주간 띠 ── */
   .week-body {
     max-height: 0;
     overflow: hidden;
@@ -358,11 +363,11 @@
     opacity: 0;
   }
   .week-body.open {
-    max-height: 500px;
+    max-height: 600px; /* 유동적인 체크리스트 높이를 수용하도록 약간 확장 */
     opacity: 1;
   }
 
-  /* 요일 헤더 — 요일+날짜 가로 배치 */
+  /* 요일 헤더 행 */
   .day-header-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -378,6 +383,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
+    min-width: 0;
   }
   .day-hdate { font-size: 13px; color: #3a3a3a; font-weight: 400; }
   .day-hname { font-size: 11px; color: #97999c; letter-spacing: 0.02em; font-weight: 400; }
@@ -388,52 +394,28 @@
   .day-hcell:last-child { border-right: none; }
 
   /* 날짜 행 */
-  .day-rows-wrap { display: flex; flex-direction: column; }
   .day-row { display: grid; grid-template-columns: repeat(7, 1fr); }
   .day-cell {
     border-right: 0.5px solid #ececea;
     border-bottom: 0.5px solid #ececea;
-    min-height: 30px;
+    min-height: 100px; /* 반응형 화면에서 넉넉히 기록을 볼 수 있도록 높이 상향 */
     position: relative;
+    background: #f6f6f3;
   }
   .day-cell:last-child { border-right: none; }
   .day-cell.empty { background: #f9f9f7; }
-  .day-num {
-    position: absolute;
-    top: 3px;
-    right: 4px;
-    font-size: 9px;
-    color: #c8cacc;
-    pointer-events: none;
-  }
-  .day-cell textarea {
-    width: 100%;
-    height: 100%;
-    min-height: 30px;
-    background: none;
-    border: none;
-    font-family: 'Noto Serif KR', serif;
-    font-size: 11px;
-    color: #3a3a3a;
-    outline: none;
-    resize: none;
-    padding: 4px 5px;
-    padding-right: 14px;
-    line-height: 1.5;
-  }
 
   .empty-hcell { background: #f9f9f7; }
 
-  /* ── 표지 화면 ── */
+  /* ── 표지 화면 (반응형 중앙 맞춤) ── */
   .cover-screen {
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 60px 80px;
+    padding: 40px 10%;
     background: #f6f6f3;
-    gap: 0;
   }
   .cover-title-area {
     display: flex;
@@ -446,10 +428,10 @@
   .cover-title-row {
     display: flex;
     align-items: baseline;
-    gap: 48px;
+    gap: clamp(20px, 5vw, 48px); /* 화면 크기에 맞게 타이틀 사이 간격 자동 조절 */
   }
-  .cover-kr { font-size: 72px; font-weight: 300; color: #97999c; letter-spacing: 0.2em; }
-  .cover-hanja { font-size: 60px; font-weight: 300; color: #c2c4c6; letter-spacing: 0.08em; }
+  .cover-kr { font-size: clamp(48px, 6vw, 72px); font-weight: 300; color: #97999c; letter-spacing: 0.2em; }
+  .cover-hanja { font-size: clamp(38px, 5vw, 60px); font-weight: 300; color: #c2c4c6; letter-spacing: 0.08em; }
   .cover-tagline {
     font-size: 12px;
     color: #b0b2b5;
@@ -460,10 +442,10 @@
   .cover-bottom {
     display: flex;
     align-items: flex-end;
-    gap: 40px;
+    gap: 24px;
     padding-top: 20px;
     width: 100%;
-    max-width: 560px;
+    max-width: 500px;
     border-top: 0.5px solid #e4e4e0;
   }
   .cover-field { flex: 1; }
@@ -483,7 +465,7 @@
   .cover-btn {
     background: none;
     border: 0.5px solid #97999c;
-    padding: 10px 28px;
+    padding: 10px 24px;
     font-family: 'Noto Serif KR', serif;
     font-size: 13px;
     color: #97999c;
@@ -493,6 +475,12 @@
     white-space: nowrap;
   }
   .cover-btn:hover { background: #efefeb; color: #3a3a3a; border-color: #3a3a3a; }
+
+  /* 태블릿 및 작은 화면용 반응형 브레이크포인트 */
+  @media (max-width: 1024px) {
+    .main { flex-direction: row; }
+    .left-panel { width: 240px; padding: 20px 16px; }
+  }
 
   /* 숨김 */
   .hidden { display: none !important; }
@@ -676,7 +664,6 @@ function renderRight(m){
     <span style="font-size:11px;color:#97999c;">${YR}</span>
   </div>`;
 
-  /* 🎯 요일 그리드에 맞춘 월간 목표/회고 영역 */
   h += `<div class="month-goal-row">
     <div class="month-goal-left">
       <div class="month-goal-spacer"></div>
@@ -721,7 +708,6 @@ function renderWeekBlock(m, w){
   const gVal=esc(get(`m${m}_w${w}_goal`));
   const rVal=esc(get(`m${m}_w${w}_retro`));
 
-  /* 🎯 요일 그리드에 맞춘 주간 헤더 영역 */
   let h=`<div class="week-block" id="wb_${m}_${w}">`;
   h+=`<div class="week-header" onclick="toggleWeek(document.getElementById('wb_${m}_${w}'))">
     <div class="week-header-left">
@@ -756,9 +742,9 @@ function renderWeekBlock(m, w){
 
   h+=`<div class="day-row">`;
   dayNums.forEach((d,i)=>{
-    if(!d){ h+=`<div class="day-cell empty" style="min-height:80px;"></div>`; return; }
+    if(!d){ h+=`<div class="day-cell empty"></div>`; return; }
     const ck=`m${m}w${w}d${d}`;
-    h+=`<div class="day-cell" style="min-height:80px;">
+    h+=`<div class="day-cell">
       <div class="checklist-wrap" id="cl-${m}-${w}-${d}">
         ${renderChecklist(ck)}
       </div>
