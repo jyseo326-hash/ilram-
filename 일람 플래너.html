@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>일람 — 一覽</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f6f6f3;
+    font-family: 'Noto Serif KR', serif;
+    color: #3a3a3a;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── 네비게이션 ── */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 40px;
+    border-bottom: 0.5px solid #c8cacc;
+    background: #f6f6f3;
+    flex-shrink: 0;
+  }
+  .nav-brand { font-size: 13px; color: #97999c; letter-spacing: 0.12em; }
+  .nav-btns { display: flex; gap: 6px; }
+  .nav-btn {
+    background: none;
+    border: 0.5px solid #ddddd9;
+    padding: 5px 14px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11px;
+    color: #97999c;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { border-color: #97999c; color: #3a3a3a; }
+  .nav-btn.active { border-color: #3a3a3a; color: #3a3a3a; }
+  .nav-right { font-size: 11px; color: #b0b2b5; letter-spacing: 0.05em; }
+
+  /* ── 메인 레이아웃 ── */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── 왼쪽: 분기 패널 ── */
+  .left-panel {
+    width: 280px;
+    flex-shrink: 0;
+    border-right: 0.5px solid #c8cacc;
+    overflow-y: auto;
+    padding: 28px 28px;
+    background: #f6f6f3;
+  }
+  .left-panel::-webkit-scrollbar { width: 3px; }
+  .left-panel::-webkit-scrollbar-thumb { background: #ddddd9; }
+
+  .q-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .q-title { font-size: 22px; font-weight: 400; color: #3a3a3a; letter-spacing: 0.05em; }
+  .q-sub { font-size: 11px; color: #b0b2b5; letter-spacing: 0.05em; }
+
+  .q-section { margin-bottom: 20px; }
+  .q-label {
+    font-size: 11px;
+    color: #3a3a3a;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .q-input {
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 0.5px solid #e4e4e0;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    color: #3a3a3a;
+    outline: none;
+    padding: 5px 0;
+    font-weight: 400;
+  }
+  .q-input::placeholder { color: #c8cacc; font-size: 12px; }
+  .q-textarea {
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 0.5px solid #e4e4e0;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    color: #3a3a3a;
+    outline: none;
+    resize: none;
+    padding: 5px 0;
+    line-height: 1.8;
+    min-height: 52px;
+    font-weight: 400;
+  }
+  .q-textarea::placeholder { color: #c8cacc; font-size: 12px; }
+
+  .mini-cals { display: flex; flex-direction: column; gap: 14px; }
+  .mini-cal-title { font-size: 10px; color: #97999c; margin-bottom: 5px; letter-spacing: 0.05em; }
+  .mini-cal table { width: 100%; border-collapse: collapse; }
+  .mini-cal th { font-size: 9px; color: #c2c4c6; text-align: center; padding: 2px; font-weight: 400; }
+  .mini-cal td { font-size: 9px; color: #97999c; text-align: center; padding: 2px 1px; cursor: default; }
+  .mini-cal td.sat { color: #7a9ec0; }
+  .mini-cal td.sun { color: #c07a7a; }
+  .mini-cal td.today { color: #3a3a3a; font-weight: 500; }
+
+  .q-divider { height: 0.5px; background: #e4e4e0; margin: 16px 0; }
+
+  .q-retro-label { font-size: 11px; color: #3a3a3a; letter-spacing: 0.06em; margin-bottom: 8px; font-weight: 500; }
+
+  /* 월 탭 */
+  .month-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border: 0.5px solid #ddddd9;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .month-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    border-right: 0.5px solid #ddddd9;
+    padding: 7px 4px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11px;
+    color: #97999c;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .month-tab:last-child { border-right: none; }
+  .month-tab:hover { background: #efefeb; color: #3a3a3a; }
+  .month-tab.active { background: #3a3a3a; color: #f6f6f3; }
+
+  /* 체크리스트 */
+  .checklist-wrap { padding: 4px 4px 4px 4px; }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 2px 0;
+    min-height: 24px;
+  }
+  .checklist-item input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    accent-color: #3a3a3a;
+    cursor: pointer;
+  }
+  .checklist-item input[type="text"] {
+    flex: 1;
+    background: none;
+    border: none;
+    border-bottom: 0.5px solid transparent;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11px;
+    color: #3a3a3a;
+    outline: none;
+    padding: 1px 0;
+    min-width: 0;
+  }
+  .checklist-item input[type="text"]:focus { border-bottom-color: #ddddd9; }
+  .checklist-item input[type="text"].done-text {
+    color: #b0b2b5;
+    text-decoration: line-through;
+  }
+  .checklist-add {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 0;
+    cursor: pointer;
+    color: #c8cacc;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    background: none;
+    border: none;
+    font-family: 'Noto Serif KR', serif;
+    width: 100%;
+    text-align: left;
+  }
+  .checklist-add:hover { color: #97999c; }
+  .checklist-add-icon { font-size: 14px; line-height: 1; }
+
+  /* ── 오른쪽: 플래너 ── */
+  .right-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 36px;
+    background: #f6f6f3;
+  }
+  .right-panel::-webkit-scrollbar { width: 3px; }
+  .right-panel::-webkit-scrollbar-thumb { background: #ddddd9; }
+
+  /* 월 헤더 */
+  .month-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .month-num {
+    font-size: 40px;
+    font-weight: 300;
+    color: #3a3a3a;
+    line-height: 1;
+  }
+  .month-suffix { font-size: 14px; color: #97999c; margin-left: 4px; }
+
+  /* 월 진행 도트 */
+  .month-progress { display: flex; gap: 3px; margin-bottom: 10px; }
+  .m-dot { width: 16px; height: 4px; background: #e4e4e0; }
+  .m-dot.done { background: #b0b2b5; }
+  .m-dot.current { background: #3a3a3a; }
+
+  /* 🎯 재조정된 월 목표/회고 영역 (요일 7등분 그리드와 완벽 일치) */
+  .month-goal-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-top: 0.5px solid #c8cacc;
+    border-bottom: 0.5px solid #c8cacc;
+    margin-bottom: 16px;
+  }
+  .month-goal-left {
+    grid-column: 1 / 5; /* 4칸 (월~목) */
+    display: flex;
+    border-right: 0.5px solid #c8cacc;
+  }
+  .month-goal-spacer {
+    width: 72px; /* 화살표(24) + 주차(48) 여백 일치용 */
+    flex-shrink: 0;
+    border-right: 0.5px solid #ddddd9;
+  }
+  .month-goal-cell {
+    flex: 1;
+    padding: 8px 12px;
+  }
+  .month-goal-right {
+    grid-column: 5 / 8; /* 3칸 (금~일) */
+  }
+  
+  .mgc-label { font-size: 11px; color: #3a3a3a; letter-spacing: 0.06em; margin-bottom: 5px; font-weight: 500; }
+  .mgc-input {
+    width: 100%;
+    background: none;
+    border: none;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    color: #3a3a3a;
+    outline: none;
+  }
+  .mgc-input::placeholder { color: #d0d0cc; }
+
+  /* ── 주차 블록 ── */
+  .week-block {
+    border: 0.5px solid #ddddd9;
+    margin-bottom: 10px;
+    background: #f6f6f3;
+    overflow: hidden;
+  }
+
+  /* 🎯 재조정된 주차 헤더 (요일 7등분 그리드와 완벽 일치) */
+  .week-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #efeeea;
+    border-bottom: 0.5px solid #ddddd9;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s;
+  }
+  .week-header:hover { background: #e8e7e3; }
+  
+  .week-header-left {
+    grid-column: 1 / 5; /* 4칸 (월~목) */
+    display: flex;
+    border-right: 0.5px solid #ddddd9;
+  }
+  .week-arrow {
+    width: 24px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: #97999c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+  }
+  .week-header.open .week-arrow { transform: rotate(180deg); color: #3a3a3a; }
+  
+  .week-num-cell {
+    width: 48px;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #3a3a3a;
+    padding: 8px 10px 8px 4px;
+    border-right: 0.5px solid #ddddd9;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.04em;
+  }
+  .week-goal-cell { flex: 1; padding: 7px 12px; }
+  .week-goal-cell input {
+    width: 100%;
+    background: none;
+    border: none;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    color: #3a3a3a;
+    outline: none;
+  }
+  .week-goal-cell input::placeholder { color: #c8cacc; }
+  
+  .week-retro-cell { 
+    grid-column: 5 / 8; /* 3칸 (금~일) */
+    padding: 7px 12px; 
+  }
+  .week-retro-cell input {
+    width: 100%;
+    background: none;
+    border: none;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    color: #3a3a3a;
+    outline: none;
+  }
+  .week-retro-cell input::placeholder { color: #c8cacc; }
+
+  /* ── 주간 띠 (슬라이드 모션) ── */
+  .week-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease;
+    opacity: 0;
+  }
+  .week-body.open {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  /* 요일 헤더 — 요일+날짜 가로 배치 */
+  .day-header-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 0.5px solid #ddddd9;
+    background: #f0efeb;
+  }
+  .day-hcell {
+    text-align: center;
+    padding: 9px 6px 8px;
+    border-right: 0.5px solid #e4e4e0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .day-hdate { font-size: 13px; color: #3a3a3a; font-weight: 400; }
+  .day-hname { font-size: 11px; color: #97999c; letter-spacing: 0.02em; font-weight: 400; }
+  .day-hcell.sat .day-hdate { color: #7a9ec0; }
+  .day-hcell.sun .day-hdate { color: #c07a7a; }
+  .day-hcell.sat .day-hname { color: #9ab8d4; }
+  .day-hcell.sun .day-hname { color: #d49a9a; }
+  .day-hcell:last-child { border-right: none; }
+
+  /* 날짜 행 */
+  .day-rows-wrap { display: flex; flex-direction: column; }
+  .day-row { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .day-cell {
+    border-right: 0.5px solid #ececea;
+    border-bottom: 0.5px solid #ececea;
+    min-height: 30px;
+    position: relative;
+  }
+  .day-cell:last-child { border-right: none; }
+  .day-cell.empty { background: #f9f9f7; }
+  .day-num {
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    font-size: 9px;
+    color: #c8cacc;
+    pointer-events: none;
+  }
+  .day-cell textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 30px;
+    background: none;
+    border: none;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11px;
+    color: #3a3a3a;
+    outline: none;
+    resize: none;
+    padding: 4px 5px;
+    padding-right: 14px;
+    line-height: 1.5;
+  }
+
+  .empty-hcell { background: #f9f9f7; }
+
+  /* ── 표지 화면 ── */
+  .cover-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 80px;
+    background: #f6f6f3;
+    gap: 0;
+  }
+  .cover-title-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    justify-content: center;
+  }
+  .cover-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 48px;
+  }
+  .cover-kr { font-size: 72px; font-weight: 300; color: #97999c; letter-spacing: 0.2em; }
+  .cover-hanja { font-size: 60px; font-weight: 300; color: #c2c4c6; letter-spacing: 0.08em; }
+  .cover-tagline {
+    font-size: 12px;
+    color: #b0b2b5;
+    letter-spacing: 0.18em;
+    font-weight: 400;
+    text-align: center;
+  }
+  .cover-bottom {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    padding-top: 20px;
+    width: 100%;
+    max-width: 560px;
+    border-top: 0.5px solid #e4e4e0;
+  }
+  .cover-field { flex: 1; }
+  .cover-field label { display: block; font-size: 11px; color: #97999c; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .cover-field input {
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 0.5px solid #c8cacc;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    color: #3a3a3a;
+    outline: none;
+    padding: 6px 0;
+  }
+  .cover-field input::placeholder { color: #c8cacc; }
+  .cover-btn {
+    background: none;
+    border: 0.5px solid #97999c;
+    padding: 10px 28px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    color: #97999c;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .cover-btn:hover { background: #efefeb; color: #3a3a3a; border-color: #3a3a3a; }
+
+  /* 숨김 */
+  .hidden { display: none !important; }
+
+  /* 스크롤바 전체 */
+  ::-webkit-scrollbar { width: 3px; height: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #ddddd9; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="cover-screen" class="cover-screen">
+  <div class="cover-title-area">
+    <div class="cover-title-row">
+      <span class="cover-kr">일람</span>
+      <span class="cover-hanja">一覽</span>
+    </div>
+    <p class="cover-tagline">하루 · 한 주 · 한 달의 기록이 한눈에 보인다</p>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-field">
+      <label>년도</label>
+      <input type="number" id="year-inp" value="2026" min="2020" max="2099">
+    </div>
+    <div class="cover-field">
+      <label>이름</label>
+      <input type="text" id="name-inp" placeholder="">
+    </div>
+    <button class="cover-btn" onclick="startPlanner()">시작하기</button>
+  </div>
+</div>
+
+<div id="main-screen" class="hidden" style="display:flex;flex-direction:column;height:100vh;">
+
+  <nav class="nav">
+    <span class="nav-brand" id="nav-brand">일람</span>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="selectQuarter(1)">1분기</button>
+      <button class="nav-btn" onclick="selectQuarter(2)">2분기</button>
+      <button class="nav-btn" onclick="selectQuarter(3)">3분기</button>
+      <button class="nav-btn" onclick="selectQuarter(4)">4분기</button>
+    </div>
+    <span class="nav-right" id="nav-right"></span>
+  </nav>
+
+  <div class="main">
+    <div class="left-panel" id="left-panel"></div>
+    <div class="right-panel" id="right-panel"></div>
+  </div>
+
+</div>
+
+<script>
+const MONTHS = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const DAYS = ['월','화','수','목','금','토','일'];
+let YR = 2026;
+let NAME = '';
+let CUR_Q = 1;
+let CUR_M = 1;
+let DATA = {};
+
+function key(k){ return k; }
+function get(k,d=''){ return DATA[k]||d; }
+function set(k,v){ DATA[k]=v; saveLS(); }
+function saveLS(){ try{ localStorage.setItem('ilram_'+YR, JSON.stringify(DATA)); }catch(e){} }
+function loadLS(){ try{ const d=localStorage.getItem('ilram_'+YR); if(d) DATA=JSON.parse(d); }catch(e){} }
+
+function getDays(y,m){ return new Date(y,m,0).getDate(); }
+function getFirst(y,m){ let d=new Date(y,m-1,1).getDay(); return d===0?6:d-1; }
+function getWeeks(y,m){ return Math.ceil((getDays(y,m)+getFirst(y,m))/7); }
+
+function startPlanner(){
+  YR = parseInt(document.getElementById('year-inp').value)||2026;
+  NAME = document.getElementById('name-inp').value;
+  loadLS();
+  document.getElementById('cover-screen').classList.add('hidden');
+  const ms = document.getElementById('main-screen');
+  ms.classList.remove('hidden');
+  ms.style.display = 'flex';
+  document.getElementById('nav-brand').textContent = '일람  ' + YR;
+  document.getElementById('nav-right').textContent = NAME;
+  selectQuarter(1);
+}
+
+function selectQuarter(q){
+  CUR_Q = q;
+  CUR_M = (q-1)*3+1;
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',i===q-1));
+  renderLeft(q);
+  renderRight(CUR_M);
+}
+
+function selectMonth(m){
+  CUR_M = m;
+  document.querySelectorAll('.month-tab').forEach((t,i)=>{
+    const mi=(CUR_Q-1)*3+1+i;
+    t.classList.toggle('active', mi===m);
+  });
+  renderRight(m);
+}
+
+/* ── 왼쪽 패널 ── */
+function renderLeft(q){
+  const months = [(q-1)*3+1,(q-1)*3+2,(q-1)*3+3];
+  let h = '';
+
+  h += `<div class="q-header">
+    <span class="q-title">${q}분기</span>
+    <span class="q-sub">${months[0]}월 — ${months[2]}월</span>
+  </div>`;
+
+  h += `<div class="month-tabs">`;
+  months.forEach(m => {
+    h += `<button class="month-tab ${m===CUR_M?'active':''}" onclick="selectMonth(${m})">${m}월</button>`;
+  });
+  h += `</div>`;
+
+  h += `<div class="q-section">
+    <div class="q-label">분기 목표</div>
+    <input class="q-input" placeholder="이번 분기의 목표" value="${esc(get('q'+q+'_goal'))}"
+      onchange="set('q${q}_goal',this.value)">
+  </div>`;
+
+  h += `<div class="q-section">
+    <div class="q-label">이번 분기</div>
+    <div class="mini-cals">${months.map(m=>miniCal(YR,m)).join('')}</div>
+  </div>`;
+
+  h += `<div class="q-section">
+    <div class="q-label">메모</div>
+    <textarea class="q-textarea" placeholder="자유롭게" onchange="set('q${q}_memo',this.value)">${esc(get('q'+q+'_memo'))}</textarea>
+  </div>`;
+
+  h += `<div class="q-divider"></div>`;
+
+  h += `<div class="q-section">
+    <div class="q-retro-label">분기 회고</div>
+    <input class="q-input" placeholder="지난 분기를 한 문장으로" value="${esc(get('q'+q+'_retro'))}"
+      onchange="set('q${q}_retro',this.value)">
+  </div>`;
+
+  document.getElementById('left-panel').innerHTML = h;
+}
+
+function miniCal(y,m){
+  const days=getDays(y,m), first=getFirst(y,m);
+  const today=new Date(); const ty=today.getFullYear(),tm=today.getMonth()+1,td=today.getDate();
+  let h=`<div class="mini-cal"><div class="mini-cal-title">${MONTHS[m-1]}</div><table><tr>`;
+  DAYS.forEach(d=>h+=`<th>${d}</th>`);
+  h+=`</tr><tr>`;
+  let c=0;
+  for(let i=0;i<first;i++){h+=`<td></td>`;c++;}
+  for(let d=1;d<=days;d++){
+    const dow=(first+d-1)%7;
+    const cls=dow===5?'sat':dow===6?'sun':(y===ty&&m===tm&&d===td)?'today':'';
+    h+=`<td class="${cls}">${d}</td>`;
+    c++;
+    if(c%7===0&&d<days)h+=`</tr><tr>`;
+  }
+  while(c%7!==0){h+=`<td></td>`;c++;}
+  h+=`</tr></table></div>`;
+  return h;
+}
+
+/* ── 오른쪽 패널 ── */
+function renderRight(m){
+  CUR_M = m;
+  const weeks = getWeeks(YR,m);
+  const totalM = 12;
+  let dots='';
+  for(let i=1;i<=totalM;i++){
+    const cls=i<m?'done':i===m?'current':'';
+    dots+=`<div class="m-dot ${cls}"></div>`;
+  }
+
+  let h = '';
+  h += `<div class="month-progress">${dots}</div>`;
+  h += `<div class="month-header">
+    <div><span class="month-num">${m}</span><span class="month-suffix">월</span></div>
+    <span style="font-size:11px;color:#97999c;">${YR}</span>
+  </div>`;
+
+  /* 🎯 요일 그리드에 맞춘 월간 목표/회고 영역 */
+  h += `<div class="month-goal-row">
+    <div class="month-goal-left">
+      <div class="month-goal-spacer"></div>
+      <div class="month-goal-cell">
+        <div class="mgc-label">이달의 목표</div>
+        <input class="mgc-input" placeholder="페이지 상단에 고정된 목표가 한 달의 방향을 잃지 않게 합니다"
+          value="${esc(get('m'+m+'_goal'))}" onchange="set('m${m}_goal',this.value)">
+      </div>
+    </div>
+    <div class="month-goal-cell month-goal-right">
+      <div class="mgc-label">이달의 회고</div>
+      <input class="mgc-input" placeholder="한 달을 일람하며…"
+        value="${esc(get('m'+m+'_retro'))}" onchange="set('m${m}_retro',this.value)">
+    </div>
+  </div>`;
+
+  for(let w=1;w<=weeks;w++){
+    h += renderWeekBlock(m, w);
+  }
+
+  document.getElementById('right-panel').innerHTML = h;
+
+  /* 현재 주 자동 오픈 */
+  const today=new Date();
+  if(today.getFullYear()===YR && today.getMonth()+1===m){
+    const td=today.getDate(), first=getFirst(YR,m);
+    const curW=Math.ceil((td+first)/7);
+    const wb=document.getElementById(`wb_${m}_${curW}`);
+    if(wb) toggleWeek(wb, true);
+  }
+}
+
+function renderWeekBlock(m, w){
+  const first=getFirst(YR,m), days=getDays(YR,m);
+  const startDate=(w-1)*7-first+1;
+  let dayNums=[];
+  for(let i=0;i<7;i++){
+    const d=startDate+i;
+    dayNums.push(d>=1&&d<=days?d:null);
+  }
+
+  const gVal=esc(get(`m${m}_w${w}_goal`));
+  const rVal=esc(get(`m${m}_w${w}_retro`));
+
+  /* 🎯 요일 그리드에 맞춘 주간 헤더 영역 */
+  let h=`<div class="week-block" id="wb_${m}_${w}">`;
+  h+=`<div class="week-header" onclick="toggleWeek(document.getElementById('wb_${m}_${w}'))">
+    <div class="week-header-left">
+      <div class="week-arrow">▾</div>
+      <div class="week-num-cell">${w}주</div>
+      <div class="week-goal-cell" onclick="event.stopPropagation()">
+        <input placeholder="이번 주 목표" value="${gVal}"
+          onchange="set('m${m}_w${w}_goal',this.value)">
+      </div>
+    </div>
+    <div class="week-retro-cell" onclick="event.stopPropagation()">
+      <input placeholder="회고" value="${rVal}"
+        onchange="set('m${m}_w${w}_retro',this.value)">
+    </div>
+  </div>`;
+
+  h+=`<div class="week-body" id="wbody_${m}_${w}">`;
+  h+=`<div class="day-header-row">`;
+  DAYS.forEach((d,i)=>{
+    const cls=i===5?'sat':i===6?'sun':'';
+    const dateNum = dayNums[i];
+    if(!dateNum){
+      h+=`<div class="day-hcell ${cls} empty-hcell"></div>`;
+    } else {
+      h+=`<div class="day-hcell ${cls}">
+        <span class="day-hdate">${dateNum}</span>
+        <span class="day-hname">${d}</span>
+      </div>`;
+    }
+  });
+  h+=`</div>`;
+
+  h+=`<div class="day-row">`;
+  dayNums.forEach((d,i)=>{
+    if(!d){ h+=`<div class="day-cell empty" style="min-height:80px;"></div>`; return; }
+    const ck=`m${m}w${w}d${d}`;
+    h+=`<div class="day-cell" style="min-height:80px;">
+      <div class="checklist-wrap" id="cl-${m}-${w}-${d}">
+        ${renderChecklist(ck)}
+      </div>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  h+=`</div></div>`;
+  return h;
+}
+
+function renderChecklist(ck){
+  const items = DATA[ck] || [];
+  let h = '';
+  items.forEach((item, idx) => {
+    const doneClass = item.done ? 'done-text' : '';
+    h += `<div class="checklist-item" id="ci_${ck}_${idx}">
+      <input type="checkbox" ${item.done?'checked':''} onchange="toggleCheck('${ck}',${idx},this.checked)">
+      <input type="text" class="${doneClass}" value="${esc(item.text)}"
+        placeholder="할 일"
+        onchange="editCheck('${ck}',${idx},this.value)"
+        onkeydown="handleCheckKey(event,'${ck}',${idx})">
+    </div>`;
+  });
+  h += `<button class="checklist-add" onclick="addCheck('${ck}')">
+    <span class="checklist-add-icon">+</span><span>추가</span>
+  </button>`;
+  return h;
+}
+
+function handleCheckKey(e, ck, idx){
+  if(e.key==='Enter'){
+    e.preventDefault();
+    addCheck(ck);
+  } else if(e.key==='Backspace' && e.target.value===''){
+    e.preventDefault();
+    deleteCheck(ck, idx);
+  }
+}
+
+function deleteCheck(ck, idx){
+  if(!DATA[ck]) return;
+  DATA[ck].splice(idx, 1);
+  saveLS();
+  const wrap=document.getElementById(ckToId(ck));
+  if(wrap){
+    wrap.innerHTML=renderChecklist(ck);
+    const inputs=wrap.querySelectorAll('input[type="text"]');
+    if(inputs.length){
+      const focusIdx=Math.max(0, idx-1);
+      inputs[focusIdx].focus();
+    }
+  }
+}
+
+function ckToId(ck){
+  const m=ck.match(/^m(\d+)w(\d+)d(\d+)$/);
+  return m ? `cl-${m[1]}-${m[2]}-${m[3]}` : null;
+}
+
+function addCheck(ck){
+  if(!DATA[ck]) DATA[ck]=[];
+  DATA[ck].push({text:'',done:false});
+  saveLS();
+  const wrap=document.getElementById(ckToId(ck));
+  if(wrap){
+    wrap.innerHTML=renderChecklist(ck);
+    const inputs=wrap.querySelectorAll('input[type="text"]');
+    if(inputs.length) inputs[inputs.length-1].focus();
+  }
+}
+
+function toggleCheck(ck,idx,val){
+  if(!DATA[ck]) return;
+  DATA[ck][idx].done=val;
+  saveLS();
+  const wrap=document.getElementById(ckToId(ck));
+  if(wrap){
+    const txt=wrap.querySelectorAll('input[type="text"]')[idx];
+    if(txt) txt.classList.toggle('done-text',val);
+  }
+}
+
+function editCheck(ck,idx,val){
+  if(!DATA[ck]) DATA[ck]=[];
+  if(!DATA[ck][idx]) DATA[ck][idx]={text:'',done:false};
+  DATA[ck][idx].text=val;
+  saveLS();
+}
+
+function refreshChecklist(ck){
+  const wrap=document.getElementById(ckToId(ck));
+  if(wrap) wrap.innerHTML=renderChecklist(ck);
+}
+
+function toggleWeek(el, forceOpen){
+  const body=el.querySelector('.week-body');
+  const header=el.querySelector('.week-header');
+  const isOpen=body.classList.contains('open');
+  if(forceOpen===true || !isOpen){
+    body.classList.add('open');
+    header.classList.add('open');
+  } else {
+    body.classList.remove('open');
+    header.classList.remove('open');
+  }
+}
+
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.tagName==='INPUT' && e.target.closest('.cover-screen')){
+    startPlanner();
+  }
+});
+</script>
+</body>
+</html>
